@@ -6,7 +6,7 @@
 /*   By: lsarraci <lsarraci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/26 18:41:30 by lsarraci          #+#    #+#             */
-/*   Updated: 2025/11/26 19:32:48 by lsarraci         ###   ########.fr       */
+/*   Updated: 2025/11/26 20:02:58 by lsarraci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void	monitor(t_table *table)
 			printf("All philosophers have eaten %d times\n",
 				table->meals_max);
 			pthread_mutex_unlock(&table->print_mtx);
-			return;
+			return ;
 		}
 		usleep(1000);
 	}
