@@ -6,15 +6,15 @@
 /*   By: lsarraci <lsarraci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/26 16:38:42 by lsarraci          #+#    #+#             */
-/*   Updated: 2025/11/26 16:55:53 by lsarraci         ###   ########.fr       */
+/*   Updated: 2025/11/26 19:27:28 by lsarraci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static int	is_digit(char c)
+static int	ft_is_digit(char c)
 {
-	return(c >= '0' && c <= '9');
+	return (c >= '0' && c <= '9');
 }
 
 int	is_valid_number(char *ch, int i)
@@ -27,14 +27,14 @@ int	is_valid_number(char *ch, int i)
 		return (0);
 	while (ch[i])
 	{
-		if (!is_digit(ch[i]))
+		if (!ft_is_digit(ch[i]))
 			return (0);
 		i++;
 	}
 	return (1);
 }
 
-long	atol_safe(char *ch, int *error)
+long	ft_atol_safe(char *ch, int *error)
 {
 	long	temp;
 	long	result;
@@ -44,7 +44,7 @@ long	atol_safe(char *ch, int *error)
 	result = 0;
 	if (ch[i] == '+')
 		i++;
-	while (ch[i] && !is_digit(ch[i]))
+	while (ch[i] && ft_is_digit(ch[i]))
 	{
 		temp = result * 10 + (ch[i] - '0');
 		if (temp < result)
@@ -55,13 +55,14 @@ long	atol_safe(char *ch, int *error)
 		result = temp;
 		i++;
 	}
+	*error = 0;
 	return (result);
 }
 
-int	strcmp(const char *c1, const char *c2)
+int	ft_strcmp(const char *c1, const char *c2)
 {
 	int	i;
-	
+
 	i = 0;
 	while (c1[i] && c2[i] && c1[i] == c2[i])
 		i++;
