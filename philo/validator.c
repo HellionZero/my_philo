@@ -6,7 +6,7 @@
 /*   By: lsarraci <lsarraci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 16:13:21 by lsarraci          #+#    #+#             */
-/*   Updated: 2025/11/26 19:29:42 by lsarraci         ###   ########.fr       */
+/*   Updated: 2025/11/27 16:24:23 by lsarraci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,12 +66,12 @@ int	arg_range_validator(t_table *table)
 {
 	if (table->phi_num < 1 || table->phi_num > 200)
 		return (printf("Error: Number of philosophers must be 1-200\n"), 0);
-	if (table->time_to_die < 60)
-		return (printf("Error: Time to die must be at least 60ms\n"), 0);
-	if (table->time_to_eat < 60)
-		return (printf("Error: Time to eat must be at least 60ms\n"), 0);
-	if (table->time_to_sleep < 60)
-		return (printf("Error: Time to sleep must be at least 60ms\n"), 0);
+	if (table->time_to_die < 10)
+		return (printf("Error: Time to die must be at least 10ms\n"), 0);
+	if (table->time_to_eat < 10)
+		return (printf("Error: Time to eat must be at least 10ms\n"), 0);
+	if (table->time_to_sleep < 10)
+		return (printf("Error: Time to sleep must be at least 10ms\n"), 0);
 	if (table->meals_max == 0)
 		return (printf("Error: Number of meals must be positive\n"), 0);
 	return (1);

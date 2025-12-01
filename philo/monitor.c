@@ -18,15 +18,15 @@ static int	check_all_ate(t_table *table, int i)
 
 	if (table->meals_max == -1)
 		return (0);
+	pthread_mutex_lock(&table->write_mtx);
 	all_done = 1;
 	while (i < table->phi_num)
 	{
-		pthread_mutex_lock(&table->event_mtx);
 		if (table->philo[i].meals_taken < table->meals_max)
 			all_done = 0;
-		pthread_mutex_unlock(&table->event_mtx);
 		i++;
 	}
+	pthread_mutex_unlock(&table->write_mtx);
 	return (all_done);
 }
 
@@ -39,19 +39,18 @@ static int	is_dead(t_table *table, int i)
 	while (i < table->phi_num)
 	{
 		philo = &table->philo[i];
-		pthread_mutex_lock(&table->event_mtx);
+		pthread_mutex_lock(&table->write_mtx);
 		current = get_time_ms();
 		time_since_meal = current - philo->last_meal;
-		pthread_mutex_unlock(&table->event_mtx);
 		if (time_since_meal > table->time_to_die)
 		{
-			pthread_mutex_lock(&table->die_mtx);
 			table->death_flag = 1;
-			pthread_mutex_unlock(&table->die_mtx);
-			philo->state = DEAD;
-			print_state(philo, "died");
+			printf("%ld %d died\n", current - table->start_time,
+				philo->philo_id);
+			pthread_mutex_unlock(&table->write_mtx);
 			return (1);
 		}
+		pthread_mutex_unlock(&table->write_mtx);
 		i++;
 	}
 	return (0);
@@ -65,13 +64,11 @@ void	monitor(t_table *table)
 			return ;
 		if (check_all_ate(table, 0))
 		{
-			pthread_mutex_lock(&table->die_mtx);
+			pthread_mutex_lock(&table->write_mtx);
 			table->death_flag = 1;
-			pthread_mutex_unlock(&table->die_mtx);
-			pthread_mutex_lock(&table->print_mtx);
 			printf("All philosophers have eaten %d times\n",
 				table->meals_max);
-			pthread_mutex_unlock(&table->print_mtx);
+			pthread_mutex_unlock(&table->write_mtx);
 			return ;
 		}
 		usleep(1000);

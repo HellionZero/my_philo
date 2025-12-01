@@ -6,7 +6,7 @@
 /*   By: lsarraci <lsarraci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/26 17:59:41 by lsarraci          #+#    #+#             */
-/*   Updated: 2025/11/26 19:14:47 by lsarraci         ###   ########.fr       */
+/*   Updated: 2025/11/27 16:13:10 by lsarraci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,38 +23,41 @@ long	get_time_ms(void)
 int	smart_sleep(t_philo *philo, long sleep_time_ms)
 {
 	long	start;
+	long	elapsed;
 
 	start = get_time_ms();
-	while ((get_time_ms() - start) < sleep_time_ms)
+	while (1)
 	{
-		pthread_mutex_lock(&philo->table->die_mtx);
-		if (philo->table->death_flag)
-		{
-			pthread_mutex_unlock(&philo->table->die_mtx);
+		if (check_dead_flag(philo->table))
 			return (0);
-		}
-		pthread_mutex_unlock(&philo->table->die_mtx);
-		usleep(500);
+		elapsed = get_time_ms() - start;
+		if (elapsed >= sleep_time_ms)
+			break ;
+		usleep(1000);
 	}
 	return (1);
+}
+
+void	print_state_with_time(t_philo *philo, char *message, long timestamp)
+{
+	int		death_msg;
+
+	death_msg = (ft_strcmp(message, "died") == 0);
+	pthread_mutex_lock(&philo->table->write_mtx);
+	if (philo->table->death_flag && !death_msg)
+	{
+		pthread_mutex_unlock(&philo->table->write_mtx);
+		return ;
+	}
+	printf("%ld %d %s\n", timestamp - philo->table->start_time,
+		philo->philo_id, message);
+	pthread_mutex_unlock(&philo->table->write_mtx);
 }
 
 void	print_state(t_philo *philo, char *message)
 {
 	long	timestamp;
-	int		death_msg;
 
-	death_msg = (ft_strcmp(message, "died") == 0);
-	pthread_mutex_lock(&philo->table->die_mtx);
-	pthread_mutex_lock(&philo->table->print_mtx);
-	if (philo->table->death_flag && !death_msg)
-	{
-		pthread_mutex_unlock(&philo->table->die_mtx);
-		pthread_mutex_unlock(&philo->table->print_mtx);
-		return ;
-	}
-	pthread_mutex_unlock(&philo->table->die_mtx);
-	timestamp = get_time_ms() - philo->table->start_time;
-	printf("%ld philosopher %d %s\n", timestamp, philo->philo_id, message);
-	pthread_mutex_unlock(&philo->table->print_mtx);
+	timestamp = get_time_ms();
+	print_state_with_time(philo, message, timestamp);
 }

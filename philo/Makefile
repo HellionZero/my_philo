@@ -26,7 +26,7 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	@$(CC) $(OBJ) -o $(NAME) -pthread
-	@echo "$(GREEN)$(NAME) compiled!$(RESET)"
+	@echo "$(GREEN)$(NAME) Compiled!$(RESET)"
 
 %.o: %.c
 	@echo "Compiling $<..."

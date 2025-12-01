@@ -25,7 +25,7 @@ static int	validate_and_parse(int argc, char **argv, t_table *table)
 
 static int	setup_simulation(t_table *table)
 {
-	if (!init_table(table, 0))
+	if (!init_table(table))
 		return (0);
 	init_philosophers(table, 0);
 	return (1);
@@ -60,9 +60,7 @@ static void	cleanup(t_table *table, int i)
 		pthread_mutex_destroy(&table->forks[i]);
 		i++;
 	}
-	pthread_mutex_destroy(&table->print_mtx);
-	pthread_mutex_destroy(&table->die_mtx);
-	pthread_mutex_destroy(&table->event_mtx);
+	pthread_mutex_destroy(&table->write_mtx);
 	free(table->philo);
 	free(table->forks);
 }

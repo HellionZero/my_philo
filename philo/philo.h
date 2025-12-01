@@ -6,7 +6,7 @@
 /*   By: lsarraci <lsarraci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 16:08:06 by lsarraci          #+#    #+#             */
-/*   Updated: 2025/11/26 19:13:27 by lsarraci         ###   ########.fr       */
+/*   Updated: 2025/12/01 17:23:07 by lsarraci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,20 +40,11 @@ typedef struct s_philo	t_philo;
 typedef struct s_table	t_table;
 typedef pthread_mutex_t	t_mtx;
 
-typedef enum e_state {
-	THINKING,
-	EATING,
-	WAITING,
-	HUNGRY,
-	SLEEPING,
-	DEAD
-}	t_state;
-
 struct	s_philo {
+	int				index;
 	int				philo_id;
 	int				meals_taken;
 	long			last_meal;
-	t_state			state;
 	pthread_t		trhead_id;
 	t_mtx			*left_fork;
 	t_mtx			*right_fork;
@@ -69,9 +60,7 @@ struct s_table {
 	long		time_to_die;
 	long		start_time;
 	t_mtx		*forks;
-	t_mtx		print_mtx;
-	t_mtx		die_mtx;
-	t_mtx		event_mtx;
+	t_mtx		write_mtx;
 	t_philo		*philo;
 };
 
@@ -89,7 +78,7 @@ int		arg_range_validator(t_table *table);
 
 /*------------------initialization--------------------*/
 
-int		init_table(t_table *table, int i);
+int		init_table(t_table *table);
 void	init_philosophers(t_table *table, int i);
 
 /*------------------time utilities--------------------*/
@@ -97,8 +86,9 @@ void	init_philosophers(t_table *table, int i);
 long	get_time_ms(void);
 int		smart_sleep(t_philo *philo, long sleep_time_ms);
 void	print_state(t_philo *philo, char *message);
+void	print_state_with_time(t_philo *philo, char *message, long timestamp);
 
-/*---------philosopher functions--------------------*/
+/*---------philosopher functions----------------------*/
 
 void	*philo_routine(void *arg);
 int		take_forks(t_philo *philo);
