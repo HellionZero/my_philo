@@ -64,11 +64,8 @@ void	monitor(t_table *table)
 			return ;
 		if (check_all_ate(table, 0))
 		{
-			pthread_mutex_lock(&table->write_mtx);
-			table->death_flag = 1;
 			printf("All philosophers have eaten %d times\n",
 				table->meals_max);
-			pthread_mutex_unlock(&table->write_mtx);
 			return ;
 		}
 		usleep(1000);

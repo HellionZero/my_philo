@@ -43,6 +43,8 @@ static int	run_simulation(t_table *table)
 			return (0);
 		i++;
 	}
+	table->start_time = get_time_ms();
+	usleep(1000);
 	monitor(table);
 	i = 0;
 	while (i < table->phi_num)

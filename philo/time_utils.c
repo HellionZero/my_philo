@@ -58,6 +58,14 @@ void	print_state(t_philo *philo, char *message)
 {
 	long	timestamp;
 
+	pthread_mutex_lock(&philo->table->write_mtx);
+	if (philo->table->death_flag)
+	{
+		pthread_mutex_unlock(&philo->table->write_mtx);
+		return ;
+	}
 	timestamp = get_time_ms();
-	print_state_with_time(philo, message, timestamp);
+	printf("%ld %d %s\n", timestamp - philo->table->start_time,
+		philo->philo_id, message);
+	pthread_mutex_unlock(&philo->table->write_mtx);
 }

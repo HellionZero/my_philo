@@ -46,7 +46,7 @@ int	init_table(t_table *table)
 		return (0);
 	}
 	table->death_flag = 0;
-	table->start_time = get_time_ms();
+	table->start_time = 0;
 	return (1);
 }
 
