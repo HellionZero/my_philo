@@ -6,7 +6,7 @@
 /*   By: lsarraci <lsarraci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/26 17:59:41 by lsarraci          #+#    #+#             */
-/*   Updated: 2025/11/27 16:13:10 by lsarraci         ###   ########.fr       */
+/*   Updated: 2025/12/04 15:25:09 by lsarraci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,23 @@ long	get_time_ms(void)
 
 	gettimeofday(&tv, NULL);
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+}
+
+long	get_start_time(t_table *table)
+{
+	long	time;
+
+	pthread_mutex_lock(&table->start_mtx);
+	time = table->start_time;
+	pthread_mutex_unlock(&table->start_mtx);
+	return (time);
+}
+
+void	set_start_time(t_table *table, long time)
+{
+	pthread_mutex_lock(&table->start_mtx);
+	table->start_time = time;
+	pthread_mutex_unlock(&table->start_mtx);
 }
 
 int	smart_sleep(t_philo *philo, long sleep_time_ms)
@@ -36,36 +53,4 @@ int	smart_sleep(t_philo *philo, long sleep_time_ms)
 		usleep(1000);
 	}
 	return (1);
-}
-
-void	print_state_with_time(t_philo *philo, char *message, long timestamp)
-{
-	int		death_msg;
-
-	death_msg = (ft_strcmp(message, "died") == 0);
-	pthread_mutex_lock(&philo->table->write_mtx);
-	if (philo->table->death_flag && !death_msg)
-	{
-		pthread_mutex_unlock(&philo->table->write_mtx);
-		return ;
-	}
-	printf("%ld %d %s\n", timestamp - philo->table->start_time,
-		philo->philo_id, message);
-	pthread_mutex_unlock(&philo->table->write_mtx);
-}
-
-void	print_state(t_philo *philo, char *message)
-{
-	long	timestamp;
-
-	pthread_mutex_lock(&philo->table->write_mtx);
-	if (philo->table->death_flag)
-	{
-		pthread_mutex_unlock(&philo->table->write_mtx);
-		return ;
-	}
-	timestamp = get_time_ms();
-	printf("%ld %d %s\n", timestamp - philo->table->start_time,
-		philo->philo_id, message);
-	pthread_mutex_unlock(&philo->table->write_mtx);
 }

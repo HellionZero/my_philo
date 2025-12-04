@@ -6,7 +6,7 @@
 /*   By: lsarraci <lsarraci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/26 17:54:29 by lsarraci          #+#    #+#             */
-/*   Updated: 2025/12/02 14:48:12 by lsarraci         ###   ########.fr       */
+/*   Updated: 2025/12/04 15:34:02 by lsarraci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,10 @@ int	check_dead_flag(t_table *table)
 static void	eat(t_philo *philo)
 {
 	long	eat_time;
+	long	start;
 	int		should_print;
 
+	start = get_start_time(philo->table);
 	pthread_mutex_lock(&philo->table->write_mtx);
 	should_print = !philo->table->death_flag;
 	if (!should_print)
@@ -39,8 +41,7 @@ static void	eat(t_philo *philo)
 	eat_time = get_time_ms();
 	philo->last_meal = eat_time;
 	philo->meals_taken++;
-	printf("%ld %d is eating\n", eat_time - philo->table->start_time,
-		philo->philo_id);
+	printf("%ld %d is eating\n", eat_time - start, philo->philo_id);
 	pthread_mutex_unlock(&philo->table->write_mtx);
 	smart_sleep(philo, philo->table->time_to_eat);
 	pthread_mutex_unlock(philo->left_fork);
@@ -70,11 +71,7 @@ void	*philo_routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	while (philo->table->start_time == 0)
-		usleep(100);
-	pthread_mutex_lock(&philo->table->write_mtx);
-	philo->last_meal = philo->table->start_time;
-	pthread_mutex_unlock(&philo->table->write_mtx);
+	wait_for_start(philo);
 	while (!check_dead_flag(philo->table) && !has_eaten_enough(philo))
 	{
 		print_state(philo, "is thinking");

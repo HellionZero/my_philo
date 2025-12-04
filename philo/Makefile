@@ -16,6 +16,7 @@ SRC = main.c \
 		monitor.c \
 		philo_utils.c \
 		philo.c \
+		table_utils.c \
 		time_utils.c \
 		validator.c \
 

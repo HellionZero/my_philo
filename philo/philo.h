@@ -6,7 +6,7 @@
 /*   By: lsarraci <lsarraci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 16:08:06 by lsarraci          #+#    #+#             */
-/*   Updated: 2025/12/01 17:23:07 by lsarraci         ###   ########.fr       */
+/*   Updated: 2025/12/04 15:28:24 by lsarraci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,8 @@ typedef struct s_philo	t_philo;
 typedef struct s_table	t_table;
 typedef pthread_mutex_t	t_mtx;
 
-struct	s_philo {
+struct	s_philo
+{
 	int				index;
 	int				philo_id;
 	int				meals_taken;
@@ -51,9 +52,11 @@ struct	s_philo {
 	t_table			*table;
 };
 
-struct s_table {
+struct s_table
+{
 	int			phi_num;
 	int			death_flag;
+	int			ready_count;
 	int			meals_max;
 	long		time_to_eat;
 	long		time_to_sleep;
@@ -61,6 +64,7 @@ struct s_table {
 	long		start_time;
 	t_mtx		*forks;
 	t_mtx		write_mtx;
+	t_mtx		start_mtx;
 	t_philo		*philo;
 };
 
@@ -84,13 +88,15 @@ void	init_philosophers(t_table *table, int i);
 /*------------------time utilities--------------------*/
 
 long	get_time_ms(void);
+long	get_start_time(t_table *table);
+void	set_start_time(t_table *table, long time);
 int		smart_sleep(t_philo *philo, long sleep_time_ms);
 void	print_state(t_philo *philo, char *message);
-void	print_state_with_time(t_philo *philo, char *message, long timestamp);
 
 /*---------philosopher functions----------------------*/
 
 void	*philo_routine(void *arg);
+void	wait_for_start(t_philo *philo);
 int		take_forks(t_philo *philo);
 int		check_dead_flag(t_table *table);
 

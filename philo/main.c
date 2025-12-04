@@ -43,8 +43,7 @@ static int	run_simulation(t_table *table)
 			return (0);
 		i++;
 	}
-	table->start_time = get_time_ms();
-	usleep(1000);
+	set_start_time(table, get_time_ms());
 	monitor(table);
 	i = 0;
 	while (i < table->phi_num)
@@ -63,6 +62,7 @@ static void	cleanup(t_table *table, int i)
 		i++;
 	}
 	pthread_mutex_destroy(&table->write_mtx);
+	pthread_mutex_destroy(&table->start_mtx);
 	free(table->philo);
 	free(table->forks);
 }

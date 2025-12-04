@@ -25,6 +25,8 @@ static int	init_mutexes(t_table *table)
 	}
 	if (pthread_mutex_init(&table->write_mtx, NULL) != 0)
 		return (0);
+	if (pthread_mutex_init(&table->start_mtx, NULL) != 0)
+		return (0);
 	return (1);
 }
 
@@ -46,7 +48,8 @@ int	init_table(t_table *table)
 		return (0);
 	}
 	table->death_flag = 0;
-	table->start_time = 0;
+	table->ready_count = 0;
+	set_start_time(table, 0);
 	return (1);
 }
 
@@ -56,7 +59,7 @@ void	init_philosophers(t_table *table, int i)
 	{
 		table->philo[i].philo_id = i + 1;
 		table->philo[i].meals_taken = 0;
-		table->philo[i].last_meal = table->start_time;
+		table->philo[i].last_meal = 0;
 		table->philo[i].table = table;
 		table->philo[i].left_fork = &table->forks[i];
 		table->philo[i].right_fork = &table->forks[(i + 1) % table->phi_num];

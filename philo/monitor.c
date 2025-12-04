@@ -6,7 +6,7 @@
 /*   By: lsarraci <lsarraci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/26 18:41:30 by lsarraci          #+#    #+#             */
-/*   Updated: 2025/11/26 20:02:58 by lsarraci         ###   ########.fr       */
+/*   Updated: 2025/12/04 18:50:14 by lsarraci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ static int	check_all_ate(t_table *table, int i)
 			all_done = 0;
 		i++;
 	}
+	if (all_done)
+		table->death_flag = 1;
 	pthread_mutex_unlock(&table->write_mtx);
 	return (all_done);
 }
@@ -33,9 +35,11 @@ static int	check_all_ate(t_table *table, int i)
 static int	is_dead(t_table *table, int i)
 {
 	long	current;
+	long	start;
 	long	time_since_meal;
 	t_philo	*philo;
 
+	start = get_start_time(table);
 	while (i < table->phi_num)
 	{
 		philo = &table->philo[i];
@@ -45,8 +49,7 @@ static int	is_dead(t_table *table, int i)
 		if (time_since_meal > table->time_to_die)
 		{
 			table->death_flag = 1;
-			printf("%ld %d died\n", current - table->start_time,
-				philo->philo_id);
+			printf("%ld %d died\n", current - start, philo->philo_id);
 			pthread_mutex_unlock(&table->write_mtx);
 			return (1);
 		}
@@ -58,6 +61,16 @@ static int	is_dead(t_table *table, int i)
 
 void	monitor(t_table *table)
 {
+	int	ready;
+
+	ready = 0;
+	while (ready < table->phi_num)
+	{
+		pthread_mutex_lock(&table->write_mtx);
+		ready = table->ready_count;
+		pthread_mutex_unlock(&table->write_mtx);
+		usleep(100);
+	}
 	while (1)
 	{
 		if (is_dead(table, 0))
